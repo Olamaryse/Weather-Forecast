@@ -52,7 +52,7 @@ function getCurrentWeather(geoData) {
 }
 
 
-// Function to get weather forecast for a city and display on the webpage
+// get city weather
 function getForecastWeather(geoData) {
     // Build the queryURL based on the lon and lat data 
     let queryURL = 'https://api.openweathermap.org/data/2.5/forecast?';
@@ -62,7 +62,7 @@ function getForecastWeather(geoData) {
     queryParams.lat = geoData[0].lat;
     queryParams.lon = geoData[0].lon;
     queryURL += $.param(queryParams);
-    // console.log(queryURL);
+ 
 
     $.ajax({
         url: queryURL,
@@ -70,10 +70,9 @@ function getForecastWeather(geoData) {
     })
     .then(function(response){
 
-        // console.log(response);
 
         $('#forecast').empty();
-        // Delcaration variables to store the current date and current hour slot by 3-hour period
+       
         
         let currentHour = moment().format('HH');
         let hourSlot = Math.floor(currentHour/3);
@@ -85,17 +84,14 @@ function getForecastWeather(geoData) {
         for(let i = 0; i < 5; i++) {
             let slotNumber = hourSlot + i * 8;
 
-            // console.log('The loop is working now');
             // Declaration of variables to store weather data
             let tempData = (response.list[slotNumber].main.temp -273.15).toFixed(2);
             let windData = (response.list[slotNumber].wind.speed * 2.23694).toFixed(1);
             let weatherIconId = response.list[slotNumber].weather[0].icon;
             let iconURL = 'https://openweathermap.org/img/wn/'+ weatherIconId + '@2x.png'
-            // console.log(tempData + "   " + windData);
-            // console.log(iconURL);
+            
 
             let showDate = moment().add('days', i+1).format('DD/MM/YYYY');
-            // console.log(showDate);
             const cardDiv = $('<div>').addClass('card col-10 col-sm-2 bg-info m-2');
             const showDateEl= $('<h5>').text(showDate);
             const iconEl = $('<img>').attr('src', iconURL);
@@ -123,9 +119,8 @@ function recordSearch(geoData) {
         $('#history').prepend(historyEl);
         
     } else if (cityArr.includes(geoData[0].name)) {
-        // console.log(('This city is in the search history'));
+     
     } else {
-        // console.log(('This is a new city'));
         cityArr.unshift(geoData[0].name);
         localStorage.setItem('cityHistory', JSON.stringify(cityArr));
         const historyEl = $('<button>').text(geoData[0].name);
@@ -136,7 +131,6 @@ function recordSearch(geoData) {
 
 // function to reset the start page
 function resetPage() {
-    // console.log('This is the reset page function');
     // empty the current and forecast weather info
     $('#today').empty();
     $('#forecast').empty();
@@ -155,10 +149,9 @@ function resetPage() {
 
 
 $(document).ready( function(){
-    // When the page is loaded, remove the weather information, and display the previous search results.
     resetPage();
 
-    // Add event listener to the search button
+    // Search button
     $('#search-button').on('click', function(event){
         // Prevent the refresh when hit the 'submit' button.
         event.preventDefault();
@@ -178,9 +171,6 @@ $(document).ready( function(){
             getCurrentWeather(geoData);
             getForecastWeather(geoData);
             recordSearch(geoData);
-        })
-        .fail(function() {
-            alert('Sorry, the city is not found. Please check your input or try another city!')
         })
     })
     // Add event listener to the history buttons.
